@@ -43,7 +43,7 @@
     ## Forever remove files or folders from history. USE WITH CAUTION!
     ##
     ## EXAMPLE: git delete-history path1 path2
-    delete-history = !sh ~/.my-git/scripts/delete-history
+    delete-history = !sh ~/.config/git/scripts/delete-history
 
     ## Create a patch file containing full history of a directory or file
     ## Use git am < patch_file to import the patch + history into a repository
@@ -58,7 +58,7 @@
     ##
     ## USAGE: git mv-with-history [-d/--dry-run] [-v/--verbose] <srcname>=<destname> <...> <...>"
     ## EXAMPLE: git mv-with-history path/to/file=newlocation/file
-    mv-with-history = !sh ~/.my-git/scripts/mv-with-history
+    mv-with-history = !sh ~/.config/git/scripts/mv-with-history
 
     ## Fetch a commit from another repository and apply it. Does not work with bare repositories.
     ## See: http://stackoverflow.com/a/9507417/1651839
@@ -74,4 +74,4 @@
     prstash = "!f() { git fetch $1 refs/pull-requests/$2/from:$3; } ; f"
 
 [diff "podiff"]
-    textconv = ~/.my-git/bin/strippocomments
+    textconv = ~/.config/git/bin/strippocomments

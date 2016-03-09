@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+source_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+config_home="$HOME/.config"
+git_config="$config_home/git"
+
+if [ ! -e "$git_config" ]
+then
+    mkdir -p "$config_home"
+    # create symlink, otherwise git won't find commands
+    ln -s "$source_dir" "$git_config"
+    echo "Created symlink '$git_config'"
+    exit 0
+else
+    echo "Directory '$git_config' exists, won't remove" 1>&2
+    exit 1
+fi
