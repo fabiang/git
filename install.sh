@@ -2,5 +2,7 @@
 
 source_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-git config --global include.path "$source_dir/gitconfig"
-git config --global core.excludesFile "$source_dir/global-gitignore"
+# create symlink, otherwise git won't find commands
+ln -s "$source_dir" "$HOME/.my-git"
+git config --global include.path "~/.my-git/gitconfig"
+git config --global core.excludesFile "~/.my-git/global-gitignore"

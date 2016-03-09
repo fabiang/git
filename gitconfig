@@ -1,3 +1,11 @@
+[color]
+    ui = true
+
+[core]
+    # number of characters to show from commit id
+    # Set to 11 chars because Bitbucket also does
+    abbrev = 11
+
 [alias]
     st = status
     ci = commit
@@ -7,3 +15,63 @@
     dc = diff --cached
     lg = log -p
     who = shortlog -s --
+
+    ## Deleted already merges branches. Very handy when working with pull requests and many branches
+    delete-merged-branches = "!f() { git checkout --quiet master && git branch --merged | grep --invert-match '\\*' | xargs -n 1 git branch --delete; git checkout --quiet @{-1}; }; f"
+
+    ## To see what new commits have been created by the last command (typically after a "git pull"):
+    ##
+    ## EXAMPLE:
+    ## git pull
+    ## git new
+    ## git new origin/master
+    new = !sh -c 'git log $1@{1}..$1@{0} "$@"'
+
+    ## This produces output that can be displayed using dotty, for example:
+    ##
+    ## EXAMPLES:
+    ## git graphviz HEAD~100..HEAD~60 | dotty /dev/stdin
+    ## git graphviz --first-parent master | dotty /dev/stdin
+    graphviz = "!f() { echo 'digraph git {' ; git log --pretty='format:  %h -> { %p }' \"$@\" | sed 's/[0-9a-f][0-9a-f]*/\"&\"/g' ; echo '}'; }; f"
+
+    ## Getting the diff of a branch since it forked from another branch, or since the last merge
+    ##
+    ## USAGE: git forkdiff <forked from branch> <forked branch> [git-diff-options]
+    ## EXAMPLE: git forkdiff origin/master my_forked_branch --stat
+    forkdiff = !bash -c 'git diff $(git merge-base "$1" "$2") "$2" "${@: 3}" ' -
+
+    ## Forever remove files or folders from history. USE WITH CAUTION!
+    ##
+    ## EXAMPLE: git delete-history path1 path2
+    delete-history = !sh ~/.my-git/scripts/delete-history
+
+    ## Create a patch file containing full history of a directory or file
+    ## Use git am < patch_file to import the patch + history into a repository
+    ## See: http://stackoverflow.com/a/11426261/1651839
+    ##
+    ## USAGE: git history-patch <path_or_file> <patch_file>
+    history-patch = "!f() { git log --pretty=email --patch-with-stat --reverse --full-index --binary -- $1 > $2; }; f"
+
+    ## Move files and folders to another location and rewrite history.
+    ## After this history looks like they every existed under that path
+    ## See: https://gist.github.com/emiller/6769886
+    ##
+    ## USAGE: git mv-with-history [-d/--dry-run] [-v/--verbose] <srcname>=<destname> <...> <...>"
+    ## EXAMPLE: git mv-with-history path/to/file=newlocation/file
+    mv-with-history = !sh ~/.my-git/scripts/mv-with-history
+
+    ## Fetch a commit from another repository and apply it. Does not work with bare repositories.
+    ## See: http://stackoverflow.com/a/9507417/1651839
+    ##
+    ## USAGE: git fetch-foreign-commit </path/to/other/repo> <commit SHA>
+    ## EXAMPLE: git fetch-foreign-commit /my/repo 5afcd967ba0
+    fetch-foreign-commit = "!f() { git --git-dir=\"$1/.git\" format-patch -k -1 --stdout $2 | git am -3 -k; }; f"
+
+    ## Alias for checking out a pull request from Stash
+    ## See: https://answers.atlassian.com/questions/179848/local-checkout-of-a-pull-request-in-stash
+    ##
+    ## EXAMPLE: git prstash origin 3 dest-branch
+    prstash = "!f() { git fetch $1 refs/pull-requests/$2/from:$3; } ; f"
+
+[diff "podiff"]
+    textconv = ~/.my-git/bin/strippocomments
