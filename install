@@ -2,6 +2,10 @@
 
 source_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# touch ~/.gitconfig, overwise `git config --global` entries will be added to
+# `config` from this folder
+touch "$HOME/.gitconfig"
+
 config_home="$HOME/.config"
 if [ -n "$XDG_CONFIG_HOME" ]
 then
